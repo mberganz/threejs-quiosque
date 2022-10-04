@@ -7,10 +7,11 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { Water } from "three/addons/objects/Water.js";
 import { Sky } from "three/addons/objects/Sky.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 let container, stats;
 let camera, scene, renderer;
-let controls, water, sun, mesh;
+let controls, water, sun, barco;
 
 init();
 animate();
@@ -50,7 +51,7 @@ function init() {
     textureWidth: 512,
     textureHeight: 512,
     waterNormals: new THREE.TextureLoader().load(
-      "textures/waternormals.jpg",
+      "../textures/waternormals.jpg",
       function (texture) {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       }
@@ -81,7 +82,7 @@ function init() {
 
   const parameters = {
     elevation: 2,
-    azimuth: 180,
+    azimuth: 130,
   };
 
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -105,21 +106,31 @@ function init() {
 
   updateSun();
 
-  //
+  // Boat by DJMaesen (https://sketchfab.com/bumstrum)
+  function boat() {
+    const loader = new GLTFLoader();
 
-  const geometry = new THREE.BoxGeometry(30, 30, 30);
-  const material = new THREE.MeshStandardMaterial({ roughness: 0 });
+    loader.load(
+      "../textures/boat/scene.gltf",
+      function (gltf) {
+        scene.add(gltf.scene);
+      },
+      undefined,
+      function (error) {
+        console.error(error);
+      }
+    );
+  }
+  barco = boat();
 
-  mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
 
-  //
+  // Orbit controls
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.maxPolarAngle = Math.PI * 0.495;
   controls.target.set(0, 10, 0);
-  controls.minDistance = 40.0;
-  controls.maxDistance = 200.0;
+  controls.minDistance = 400.0;
+  controls.maxDistance = 2000.0;
   controls.update();
 
   //
@@ -166,9 +177,9 @@ function animate() {
 function render() {
   const time = performance.now() * 0.001;
 
-  mesh.position.y = Math.sin(time) * 20 + 5;
-  mesh.rotation.x = time * 0.5;
-  mesh.rotation.z = time * 0.51;
+  // barco.rotation.y = Math.sin(time) * 20 + 5;
+  // barco.rotation.x = time * 0.5;
+  // barco.rotation.z = time * 0.51;
 
   water.material.uniforms["time"].value += 1.0 / 60.0;
 
