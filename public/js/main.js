@@ -12,6 +12,8 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 let container, stats;
 let camera, scene, renderer;
 let controls, water, sun, barco;
+let r, x, y, z;
+let axis, speed;
 
 init();
 animate();
@@ -21,7 +23,11 @@ function init() {
 
   //
 
-  renderer = new THREE.WebGLRenderer();
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    logarithmicDepthBuffer: true,
+    preserveDrawingBuffer: true,
+  });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -37,7 +43,7 @@ function init() {
     1,
     20000
   );
-  camera.position.set(30, 30, 100);
+  camera.position.set(-75, 25, 30);
 
   //
 
@@ -107,12 +113,15 @@ function init() {
   updateSun();
 
   // Boat by DJMaesen (https://sketchfab.com/bumstrum)
+
   function boat() {
     const loader = new GLTFLoader();
 
-    loader.load(
+    barco = loader.load(
       "../textures/boat/scene.gltf",
-      function (gltf) {
+      function barco(gltf) {
+        // gltf.scene.position.set( x, y, z );
+        const model = gltf.scene;
         scene.add(gltf.scene);
       },
       undefined,
@@ -121,8 +130,7 @@ function init() {
       }
     );
   }
-  barco = boat();
-
+  boat();
 
   // Orbit controls
 
@@ -157,6 +165,8 @@ function init() {
   folderWater.open();
 
   //
+  axis = new THREE.Vector3(0, 1, 0).normalize();
+  speed = 0.012;
 
   window.addEventListener("resize", onWindowResize);
 }
@@ -177,9 +187,11 @@ function animate() {
 function render() {
   const time = performance.now() * 0.001;
 
-  // barco.rotation.y = Math.sin(time) * 20 + 5;
-  // barco.rotation.x = time * 0.5;
-  // barco.rotation.z = time * 0.51;
+  camera.position.x += 2.5;
+  camera.position.z += 2.5;
+  if (camera) {
+    camera.rotateOnAxis(axis, speed);
+  }
 
   water.material.uniforms["time"].value += 1.0 / 60.0;
 
