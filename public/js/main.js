@@ -11,7 +11,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 let container, stats;
 let camera, scene, renderer, geometry, material;
-let controls, water, sun, barco, areia;
+let controls, water, sun, barco, areia, container3D;
 let r, x, y, z;
 let axis, speed;
 
@@ -114,13 +114,13 @@ function init() {
 
   // Boat by DJMaesen (https://sketchfab.com/bumstrum)
 
-  function boat() {
+  function createBoat() {
     const loader = new GLTFLoader();
 
     barco = loader.load(
       "../textures/boat/scene.gltf",
       function barco(gltf) {
-        // gltf.scene.position.set( x, y, z );
+        gltf.scene.position.set( 0, 0, 2000 );
         const model = gltf.scene;
         scene.add(gltf.scene);
       },
@@ -130,10 +130,10 @@ function init() {
       }
     );
   }
-  boat();
+  createBoat();
 
   // Beach
-  function beach() {
+  function createBeach() {
     const sandTexture = new THREE.TextureLoader().load(
       "../textures/sand/sandtexture3.jpg",
       function (texture) {
@@ -163,7 +163,27 @@ function init() {
     scene.add(areia);
     areia.position.set(0, 0, 3500);
   }
-  beach();
+  createBeach();
+
+  // Container
+  function createContainer() {
+    const loader = new GLTFLoader();
+
+    container3D = loader.load(
+      "../textures/container/scene.gltf",
+      function barco(gltf) {
+        gltf.scene.scale.set( 400, 200, 200 );
+        gltf.scene.position.set( 0, 230, 3500 );
+        const model = gltf.scene;
+        scene.add(gltf.scene);
+      },
+      undefined,
+      function (error) {
+        console.error(error);
+      }
+    );
+  }
+  createContainer();
 
   // Orbit controls
 
