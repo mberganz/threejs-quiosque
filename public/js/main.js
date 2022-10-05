@@ -11,7 +11,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 let container, stats;
 let camera, scene, renderer, geometry, material;
-let controls, water, sun, barco, areia, container3D;
+let controls, water, sun, barco, areia, container3D, palmTree;
 let r, x, y, z;
 let axis, speed;
 
@@ -120,7 +120,7 @@ function init() {
     barco = loader.load(
       "../textures/boat/scene.gltf",
       function barco(gltf) {
-        gltf.scene.position.set( 0, 0, 2000 );
+        gltf.scene.position.set(0, 0, 2000);
         const model = gltf.scene;
         scene.add(gltf.scene);
       },
@@ -172,8 +172,8 @@ function init() {
     container3D = loader.load(
       "../textures/container/scene.gltf",
       function barco(gltf) {
-        gltf.scene.scale.set( 400, 200, 200 );
-        gltf.scene.position.set( 0, 230, 3500 );
+        gltf.scene.scale.set(400, 200, 200);
+        gltf.scene.position.set(0, 230, 3500);
         const model = gltf.scene;
         scene.add(gltf.scene);
       },
@@ -184,6 +184,26 @@ function init() {
     );
   }
   createContainer();
+
+  // Palm tree
+  function createPalmTree() {
+    const loader = new GLTFLoader();
+
+    palmTree = loader.load(
+      "../textures/palm-tree/scene.gltf",
+      function barco(gltf) {
+        gltf.scene.scale.set(200, 200, 200);
+        gltf.scene.position.set(0, 230, 3700);
+        const model = gltf.scene;
+        scene.add(gltf.scene);
+      },
+      undefined,
+      function (error) {
+        console.error(error);
+      }
+    );
+  }
+  createPalmTree();
 
   // Orbit controls
 
