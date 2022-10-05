@@ -10,8 +10,8 @@ import { Sky } from "three/addons/objects/Sky.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 let container, stats;
-let camera, scene, renderer;
-let controls, water, sun, barco;
+let camera, scene, renderer, geometry, material;
+let controls, water, sun, barco, areia;
 let r, x, y, z;
 let axis, speed;
 
@@ -43,7 +43,7 @@ function init() {
     1,
     20000
   );
-  camera.position.set(-75, 25, 30);
+  camera.position.set(-750, 200, 500);
 
   //
 
@@ -63,9 +63,9 @@ function init() {
       }
     ),
     sunDirection: new THREE.Vector3(),
-    sunColor: 0xffffff,
+    sunColor: 0xffe87c,
     waterColor: 0x001e0f,
-    distortionScale: 3.7,
+    distortionScale: 8,
     fog: scene.fog !== undefined,
   });
 
@@ -132,13 +132,46 @@ function init() {
   }
   boat();
 
+  // Beach
+  function beach() {
+    const sandTexture = new THREE.TextureLoader().load(
+      "../textures/sand/sandtexture3.jpg",
+      function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.offset.set(0, 0);
+        texture.repeat.set(250, 250);
+      }
+    );
+    const sandNormal = new THREE.TextureLoader().load(
+      "../textures/sand/sandnormals2.jpg",
+      function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.offset.set(0, 0);
+        texture.repeat.set(250, 250);
+      }
+    );
+
+    areia = new THREE.Mesh(
+      new THREE.BoxGeometry(10000, 1, 3000),
+      new THREE.MeshPhysicalMaterial({
+        map: sandTexture,
+        normalMap: sandNormal,
+        // color: 0xc2b280,
+        wireframe: false,
+      })
+    );
+    scene.add(areia);
+    areia.position.set(0, 0, 3500);
+  }
+  beach();
+
   // Orbit controls
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.maxPolarAngle = Math.PI * 0.495;
   controls.target.set(0, 10, 0);
-  controls.minDistance = 400.0;
-  controls.maxDistance = 2000.0;
+  controls.minDistance = 4.0;
+  controls.maxDistance = 5000.0;
   controls.update();
 
   //
@@ -169,6 +202,7 @@ function init() {
   speed = 0.012;
 
   window.addEventListener("resize", onWindowResize);
+  renderer.render(scene, camera);
 }
 
 function onWindowResize() {
@@ -187,11 +221,12 @@ function animate() {
 function render() {
   const time = performance.now() * 0.001;
 
-  camera.position.x += 2.5;
-  camera.position.z += 2.5;
-  if (camera) {
-    camera.rotateOnAxis(axis, speed);
-  }
+  // camera.position.x += Math.sin(1);
+  // camera.rotation.y += Math.sin(0.001);
+  // camera.position.z += Math.sin(1);
+  // if (camera) {
+  //   camera.rotateOnAxis(axis, speed);
+  // }
 
   water.material.uniforms["time"].value += 1.0 / 60.0;
 
