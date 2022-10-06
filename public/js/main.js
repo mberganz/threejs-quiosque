@@ -8,6 +8,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { Water } from "three/addons/objects/Water.js";
 import { Sky } from "three/addons/objects/Sky.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { AmbientLight } from "three";
 
 let container, stats;
 let camera, scene, renderer, geometry, material;
@@ -130,7 +131,7 @@ function init() {
       }
     );
   }
-  createBoat();
+  // createBoat();
 
   // Beach
   function createBeach() {
@@ -156,7 +157,7 @@ function init() {
       new THREE.MeshPhysicalMaterial({
         map: sandTexture,
         normalMap: sandNormal,
-        // color: 0xc2b280,
+        color: 0xc2b280,
         wireframe: false,
       })
     );
@@ -164,6 +165,72 @@ function init() {
     areia.position.set(0, 0, 3500);
   }
   createBeach();
+
+  // Monte de areia layer 1
+  function createMonteLayer1() {
+    const sandTexture = new THREE.TextureLoader().load(
+      "../textures/sand/sandtexture3.jpg",
+      function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.offset.set(0, 0);
+        texture.repeat.set(250, 250);
+      }
+    );
+    const sandNormal = new THREE.TextureLoader().load(
+      "../textures/sand/sandnormals2.jpg",
+      function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.offset.set(0, 0);
+        texture.repeat.set(250, 250);
+      }
+    );
+
+    areia = new THREE.Mesh(
+      new THREE.BoxGeometry(10000, 100, 2000),
+      new THREE.MeshPhysicalMaterial({
+        map: sandTexture,
+        normalMap: sandNormal,
+        color: 0xc2b280,
+        wireframe: false,
+      })
+    );
+    scene.add(areia);
+    areia.position.set(0, 50, 4000);
+  }
+  createMonteLayer1();
+
+  // Monte de areia layer 2
+  function createMonteLayer2() {
+    const sandTexture = new THREE.TextureLoader().load(
+      "../textures/sand/sandtexture3.jpg",
+      function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.offset.set(0, 0);
+        texture.repeat.set(250, 250);
+      }
+    );
+    const sandNormal = new THREE.TextureLoader().load(
+      "../textures/sand/sandnormals2.jpg",
+      function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.offset.set(0, 0);
+        texture.repeat.set(250, 250);
+      }
+    );
+
+    areia = new THREE.Mesh(
+      new THREE.BoxGeometry(10000, 200, 1000),
+      new THREE.MeshPhysicalMaterial({
+        map: sandTexture,
+        normalMap: sandNormal,
+        color: 0xc2b280,
+        wireframe: false,
+      })
+    );
+    scene.add(areia);
+    areia.position.set(0, 150, 4500);
+  }
+  createMonteLayer2();
 
   // Container
   function createContainer() {
@@ -183,7 +250,7 @@ function init() {
       }
     );
   }
-  createContainer();
+  // createContainer();
 
   // Palm tree
   function createPalmTree() {
@@ -193,7 +260,8 @@ function init() {
       "../textures/palm-tree/scene.gltf",
       function barco(gltf) {
         gltf.scene.scale.set(200, 200, 200);
-        gltf.scene.position.set(0, 230, 3700);
+        const [x, y] = [THREE.MathUtils.randFloatSpread(5000), THREE.MathUtils.randFloatSpread(1000)];
+        gltf.scene.position.set(x, 2, 3700 + y);
         const model = gltf.scene;
         scene.add(gltf.scene);
       },
@@ -203,7 +271,30 @@ function init() {
       }
     );
   }
-  createPalmTree();
+  // createPalmTree();
+  // Array(10).fill().forEach(createPalmTree);
+
+  // Quadrado normal
+  function createQuadrado() {
+    const mesh = new THREE.Mesh(
+      new THREE.BoxGeometry(30, 30, 30),
+      new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        wireframe: false
+      })
+    );
+    scene.add(mesh);
+  }
+  // createQuadrado();
+
+  // Luz Ambiente
+  function luzAmbiente() {
+    const luz = new THREE.AmbientLight({
+      color: 0xffffff
+    });
+    scene.add(luz);
+  }
+  luzAmbiente();
 
   // Orbit controls
 
