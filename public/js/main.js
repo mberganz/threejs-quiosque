@@ -12,7 +12,7 @@ import { AmbientLight } from "three";
 
 let container, stats;
 let camera, scene, renderer, geometry, material;
-let controls, water, sun, barco, areia, container3D, palmTree;
+let controls, gridHelper, water, sun, barco, areia, container3D, palmTree;
 let r, x, y, z;
 let axis, speed;
 
@@ -72,13 +72,13 @@ function init() {
 
   water.rotation.x = -Math.PI / 2;
 
-  scene.add(water);
+  // scene.add(water);
 
   // Skybox
 
   const sky = new Sky();
   sky.scale.setScalar(10000);
-  scene.add(sky);
+  // scene.add(sky);
 
   const skyUniforms = sky.material.uniforms;
 
@@ -110,8 +110,7 @@ function init() {
 
     scene.environment = renderTarget.texture;
   }
-
-  updateSun();
+  // updateSun();
 
   // Boat by DJMaesen (https://sketchfab.com/bumstrum)
 
@@ -232,6 +231,19 @@ function init() {
   }
   createMonteLayer2();
 
+  // Sombras
+  function shadowPlane() {
+    const geometry = new THREE.PlaneGeometry(10000, 10000);
+    geometry.rotateX(- Math.PI / 2);
+    const material = new THREE.ShadowMaterial();
+    material.opacity = 0.2;
+    const plane = new THREE.Mesh(geometry, material);
+    plane.position.y = 250;
+    plane.receiveShadow = true;
+    scene.add(plane);
+  }
+  shadowPlane();
+
   // Container
   function createContainer() {
     const loader = new GLTFLoader();
@@ -239,10 +251,10 @@ function init() {
     container3D = loader.load(
       "../textures/container/scene.gltf",
       function barco(gltf) {
-        gltf.scene.scale.set(400, 200, 200);
-        gltf.scene.position.set(0, 230, 3500);
         const model = gltf.scene;
-        scene.add(gltf.scene);
+        model.scale.set(400, 200, 200);
+        model.position.set(0, 230, 3500);
+        scene.add(model);
       },
       undefined,
       function (error) {
@@ -259,11 +271,13 @@ function init() {
     palmTree = loader.load(
       "../textures/palm-tree/scene.gltf",
       function barco(gltf) {
-        gltf.scene.scale.set(200, 200, 200);
-        const [x, y] = [THREE.MathUtils.randFloatSpread(5000), THREE.MathUtils.randFloatSpread(1000)];
-        gltf.scene.position.set(x, 2, 3700 + y);
         const model = gltf.scene;
-        scene.add(gltf.scene);
+        model.scale.set(200, 200, 200);
+        const [x, y] = [THREE.MathUtils.randFloatSpread(5000), THREE.MathUtils.randFloatSpread(1000)];
+        model.position.set(x, 2, 3700 + y);
+        model.castShadow = true;
+        model.receiveShadow = true;
+        scene.add(model);
       },
       undefined,
       function (error) {
@@ -271,8 +285,8 @@ function init() {
       }
     );
   }
-  // createPalmTree();
-  // Array(10).fill().forEach(createPalmTree);
+  createPalmTree();
+  Array(10).fill().forEach(createPalmTree);
 
   // Quadrado normal
   function createQuadrado() {
@@ -296,7 +310,7 @@ function init() {
   }
   luzAmbiente();
 
-  // Orbit controls
+  // Orbit controls & Helpers
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.maxPolarAngle = Math.PI * 0.495;
@@ -304,6 +318,9 @@ function init() {
   controls.minDistance = 4.0;
   controls.maxDistance = 5000.0;
   controls.update();
+
+  gridHelper = new THREE.GridHelper(10000, 50);
+  scene.add(gridHelper);
 
   //
 
