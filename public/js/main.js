@@ -12,7 +12,7 @@ import { AmbientLight } from "three";
 
 let container, stats;
 let camera, scene, renderer, geometry, material;
-let controls, gridHelper, water, sun, barco, areia, container3D, palmTree;
+let controls, gridHelper, axesHelper, water, sun, barco, areia, container3D, palmTree;
 let r, x, y, z;
 let axis, speed;
 
@@ -274,7 +274,7 @@ function init() {
         const model = gltf.scene;
         model.scale.set(200, 200, 200);
         const [x, y] = [THREE.MathUtils.randFloatSpread(5000), THREE.MathUtils.randFloatSpread(1000)];
-        model.position.set(x, 2, 3700 + y);
+        model.position.set(x, 2, 4000 + y);
         model.castShadow = true;
         model.receiveShadow = true;
         scene.add(model);
@@ -313,14 +313,15 @@ function init() {
   // Orbit controls & Helpers
 
   controls = new OrbitControls(camera, renderer.domElement);
-  controls.maxPolarAngle = Math.PI * 0.495;
+  // controls.maxPolarAngle = Math.PI * 0.495;
   controls.target.set(0, 10, 0);
   controls.minDistance = 4.0;
-  controls.maxDistance = 5000.0;
+  controls.maxDistance = 10000.0;
   controls.update();
-
-  gridHelper = new THREE.GridHelper(10000, 50);
-  scene.add(gridHelper);
+  // The X axis is red. The Y axis is green. The Z axis is blue.
+  axesHelper = new THREE.AxesHelper(1000);
+  gridHelper = new THREE.GridHelper(10000, 100);
+  scene.add(gridHelper, axesHelper);
 
   //
 
