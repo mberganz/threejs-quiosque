@@ -12,7 +12,15 @@ import { AmbientLight } from "three";
 
 let container, stats;
 let camera, scene, renderer, geometry, material;
-let controls, gridHelper, axesHelper, water, sun, barco, areia, container3D, palmTree;
+let controls,
+  gridHelper,
+  axesHelper,
+  water,
+  sun,
+  barco,
+  areia,
+  container3D,
+  palmTree;
 let r, x, y, z;
 let axis, speed;
 
@@ -110,7 +118,7 @@ function init() {
 
     scene.environment = renderTarget.texture;
   }
-  // updateSun();
+  updateSun();
 
   // Boat by DJMaesen (https://sketchfab.com/bumstrum)
 
@@ -164,6 +172,39 @@ function init() {
     areia.position.set(0, 0, 3500);
   }
   createBeach();
+
+  // Orla da praia
+  function createOrla() {
+    const sandTexture = new THREE.TextureLoader().load(
+      "../textures/sand/sandtexture3.jpg",
+      function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.offset.set(0, 0);
+        texture.repeat.set(250, 250);
+      }
+    );
+    const sandNormal = new THREE.TextureLoader().load(
+      "../textures/sand/sandnormals2.jpg",
+      function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.offset.set(0, 0);
+        texture.repeat.set(250, 250);
+      }
+    );
+
+    areia = new THREE.Mesh(
+      new THREE.SphereGeometry(60, 1, 60),
+      new THREE.MeshPhysicalMaterial({
+        map: sandTexture,
+        normalMap: sandNormal,
+        color: 0xc2b280,
+        wireframe: false,
+      })
+    );
+    scene.add(areia);
+    areia.position.set(0, 50, 3500);
+  }
+  createOrla();
 
   // Monte de areia layer 1
   function createMonteLayer1() {
@@ -234,7 +275,7 @@ function init() {
   // Sombras
   function shadowPlane() {
     const geometry = new THREE.PlaneGeometry(10000, 10000);
-    geometry.rotateX(- Math.PI / 2);
+    geometry.rotateX(-Math.PI / 2);
     const material = new THREE.ShadowMaterial();
     material.opacity = 0.2;
     const plane = new THREE.Mesh(geometry, material);
@@ -253,7 +294,7 @@ function init() {
       function barco(gltf) {
         const model = gltf.scene;
         model.scale.set(400, 200, 200);
-        model.position.set(0, 230, 3500);
+        model.position.set(0, 330, 3500);
         scene.add(model);
       },
       undefined,
@@ -262,7 +303,7 @@ function init() {
       }
     );
   }
-  // createContainer();
+  createContainer();
 
   // Palm tree
   function createPalmTree() {
@@ -273,8 +314,11 @@ function init() {
       function barco(gltf) {
         const model = gltf.scene;
         model.scale.set(200, 200, 200);
-        const [x, y] = [THREE.MathUtils.randFloatSpread(5000), THREE.MathUtils.randFloatSpread(1000)];
-        model.position.set(x, 2, 4000 + y);
+        const [x, y] = [
+          THREE.MathUtils.randFloatSpread(6000),
+          THREE.MathUtils.randFloatSpread(1000),
+        ];
+        model.position.set(x, 2, 4500 + y);
         model.castShadow = true;
         model.receiveShadow = true;
         scene.add(model);
@@ -286,29 +330,16 @@ function init() {
     );
   }
   createPalmTree();
-  Array(10).fill().forEach(createPalmTree);
-
-  // Quadrado normal
-  function createQuadrado() {
-    const mesh = new THREE.Mesh(
-      new THREE.BoxGeometry(30, 30, 30),
-      new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        wireframe: false
-      })
-    );
-    scene.add(mesh);
-  }
-  // createQuadrado();
+  Array(15).fill().forEach(createPalmTree);
 
   // Luz Ambiente
   function luzAmbiente() {
     const luz = new THREE.AmbientLight({
-      color: 0xffffff
+      color: 0xffffff,
     });
     scene.add(luz);
   }
-  luzAmbiente();
+  // luzAmbiente();
 
   // Orbit controls & Helpers
 
